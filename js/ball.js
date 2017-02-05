@@ -1,31 +1,31 @@
 
-function Ball(c) {
+function Ball(canvas) {
 
-	this.canvas = c.getContext('2d');
-
+	this.canvas = canvas;
+	this.canvas_context = canvas.getContext('2d');
 
 	console.log("Ball constructor called");
 
-	this.start_x_velocity = 0;
-	this.start_y_velocity = 0;
+	this.start_x_velocity = 2;
+	this.start_y_velocity = 2;
 
 	this.x_position = 10;
 	this.y_position = 10;
-	this.diameter = 100;
+	this.diameter = 10;
 
 	this.x_velocity = 0;
 	this.y_velocity = 0;
 
-	this.Reset();
+	this.paddle_speed_angle = 0.3;
+	this.velocity_increase = 0.2;
 
-	// this.x_velocity = this.start_x_velocity;
-	// this.y_velocity = this.start_y_velocity;
+	this.reset();
 
+	this.x_velocity = this.start_x_velocity;
+	this.y_velocity = this.start_y_velocity;
 }
 
-Ball.prototype.Reset = function() {
-
-	console.log("Ball reset called");
+Ball.prototype.reset = function() {
 
 	this.x_velocity = this.start_x_velocity;
 	this.y_velocity = this.start_y_velocity;
@@ -34,62 +34,86 @@ Ball.prototype.Reset = function() {
 	this.y_position = this.canvas.height / 2;
 }
 
-Ball.prototype.Update = function() {
-	this.ControlEdgeCollisions();
+Ball.prototype.update = function(player1, player2) {
+
+	this.x_position += this.x_velocity;
+	this.y_position += this.y_velocity;
+
+	this.increaseVelocity();
+
+	this.controlEdgeCollisions(player1, player2);
 }
 
-Ball.prototype.Draw = function() {
-
-	console.log("Ball draw");
-
-	this.canvas.fillStyle = 'white';
-	this.canvas.font = "30px Arial";
-	this.canvas.fillText("A BALL EXPERIMENT", 200, 200);
-
-	cc.font = "30px Arial";
-	cc.fillText("A CC EXPERIMENT", 200, 300);
-
-
-	// this.canvas.fillStyle = 'white';
-	this.canvas.fillRect(this.x_position, this.y_position, this.diameter, this.diameter);
-	this.canvas.fillRect(10, 10, 50, 50);
-
+Ball.prototype.increaseVelocity = function()  {
+	if (this.x_velocity > 0) {
+		this.x_velocity +=  this.velocity_increase;
+	} else {
+		this.x_velocity -=  this.velocity_increase;
+	}
+	if (this.y_velocity > 0) {
+		this.y_velocity +=  this.velocity_increase;
+	} else {
+		this.y_velocity -=  this.velocity_increase;
+	}
 }
 
-Ball.prototype.ControlEdgeCollisions = function() {
+Ball.prototype.draw = function() {
 
+	this.canvas_context.fillStyle = 'white';
+	this.canvas_context.fillRect(this.x_position, this.y_position, this.diameter, this.diameter);
+}
+
+Ball.prototype.controlEdgeCollisions = function(player1, player2) {
+
+	this.edgeBounce();
+	this.playerCheck(player1, player2);
+}
+
+Ball.prototype.edgeBounce = function() {
 	if (this.y_position < 0 && this.y_velocity < 0) {
 		this.y_velocity = -this.y_velocity;
 	}
 	else if (this.y_position > c.height - this.diameter && this.y_velocity > 0) {
 		this.y_velocity = -this.y_velocity;
+	}	
+}
+
+Ball.prototype.playerCheck = function(player1, player2) {
+
+	if (!hit)  {
+		console.log("ball: " + this.y_position + " p1 " + player1.y_position + " p2 " + player2.y_position);
 	}
 
 	if (this.x_position < 0) {
-		if (this.y_position > player1_y && this.y_position < player1_y + player_height) {
+		if (this.y_position > player1.y_position && this.y_position < player1.y_position + player1.height) {
 			this.x_velocity = -this.x_velocity;
-			play('hit');
-			var delta_y = this.y_position - (player1_y + player_height / 2);
-			this.y_velocity = delta_y * 0.3;
+			music_player.play('hit');
+			var delta_y = this.y_position - (player1.y_position + player1.height / 2);
+			this.y_velocity = delta_y * this.paddle_speed_angle;
 		}
 		else {
 			score2++;
-			play('applause');
-			reset();
+			music_player.play('applause');
+			reset_game();
 		}
 	}
-	else if (ball_x > c.width - ball_diameter) {
-		if (ball_y > player2_y && ball_y < player2_y + player_height) {
-			x_velocity = -x_velocity;
-			play('hit');
-			var delta_y = ball_y - (player2_y + player_height / 2);
-			y_velocity = delta_y * 0.3;
+	else if (this.x_position > this.canvas.width - this.diameter) {
+
+		hit = true;
+
+		if (this.y_position > player2.y_position && this.y_position < player2.y_position + player2.height) {
+			this.x_velocity = -this.x_velocity;
+			music_player.play('hit');
+			var delta_y = this.y_position - (player2.y_position + player2.height / 2);
+			this.y_velocity = delta_y * this.paddle_speed_angle;
 		}
 		else {
 			score1++;
-			play('applause');
-			reset();
+			music_player.play('applause');
+			reset_game();
 		}
 	}
+
 }
+
 
