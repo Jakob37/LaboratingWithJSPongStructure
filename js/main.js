@@ -26,11 +26,16 @@ var score2 = 0;
 var start_ai_speed = 6;
 var ai_speed = start_ai_speed;
 
+var ball_object;
+
+
 window.onload=function() {
 	c = document.getElementById('gc');
 	cc = c.getContext('2d');
-	setInterval(update, 1000/30);
 
+	ball_object = new Ball(c);
+
+	setInterval(update, 1000/30);
 	c.addEventListener('mousemove', function(event) {
 		player1_y = event.clientY - player_height / 2;
 	});
@@ -46,6 +51,9 @@ function reset() {
 }
 
 function update() {
+
+	ball_object.Update();
+
 	if (x_velocity > 0) {
 		x_velocity +=  velocity_increase;
 	} else {
@@ -56,48 +64,49 @@ function update() {
 	} else {
 		y_velocity -=  velocity_increase;
 	}
+
 	ai_speed += velocity_increase/2;
 	ball_x += x_velocity;
 	ball_y += y_velocity;
-	controlEdgeCollisions();
+	// controlEdgeCollisions();
 	updateAI();
 	draw();
 }
 
-function controlEdgeCollisions() {
-	if (ball_y < 0 && y_velocity < 0) {
-		y_velocity = -y_velocity;
-	}
-	else if (ball_y > c.height - ball_diameter && y_velocity > 0) {
-		y_velocity = -y_velocity;
-	}
-	if (ball_x < 0) {
-		if (ball_y > player1_y && ball_y < player1_y + player_height) {
-			x_velocity = -x_velocity;
-			play('hit');
-			var delta_y = ball_y - (player1_y + player_height / 2);
-			y_velocity = delta_y * 0.3;
-		}
-		else {
-			score2++;
-			play('applause');
-			reset();
-		}
-	}
-	else if (ball_x > c.width - ball_diameter) {
-		if (ball_y > player2_y && ball_y < player2_y + player_height) {
-			x_velocity = -x_velocity;
-			play('hit');
-			var delta_y = ball_y - (player2_y + player_height / 2);
-			y_velocity = delta_y * 0.3;
-		}
-		else {
-			score1++;
-			play('applause');
-			reset();
-		}
-	}
-}
+// function controlEdgeCollisions() {
+// 	if (ball_y < 0 && y_velocity < 0) {
+// 		y_velocity = -y_velocity;
+// 	}
+// 	else if (ball_y > c.height - ball_diameter && y_velocity > 0) {
+// 		y_velocity = -y_velocity;
+// 	}
+// 	if (ball_x < 0) {
+// 		if (ball_y > player1_y && ball_y < player1_y + player_height) {
+// 			x_velocity = -x_velocity;
+// 			play('hit');
+// 			var delta_y = ball_y - (player1_y + player_height / 2);
+// 			y_velocity = delta_y * 0.3;
+// 		}
+// 		else {
+// 			score2++;
+// 			play('applause');
+// 			reset();
+// 		}
+// 	}
+// 	else if (ball_x > c.width - ball_diameter) {
+// 		if (ball_y > player2_y && ball_y < player2_y + player_height) {
+// 			x_velocity = -x_velocity;
+// 			play('hit');
+// 			var delta_y = ball_y - (player2_y + player_height / 2);
+// 			y_velocity = delta_y * 0.3;
+// 		}
+// 		else {
+// 			score1++;
+// 			play('applause');
+// 			reset();
+// 		}
+// 	}
+// }
 
 function updateAI() {
 	if (player2_y + player_height / 2 < ball_y) {
@@ -111,11 +120,13 @@ function updateAI() {
 function draw() {
 	cc.fillStyle = 'black';
 	cc.fillRect(0, 0, c.width, c.height);
+
+	ball_object.Draw();
 	
 	cc.fillStyle = 'white';
 	cc.fillRect(0, player1_y, player_width, player_height);
 	cc.fillRect(c.width - player_width, player2_y, player_width, player_height);
-	cc.fillRect(ball_x, ball_y, ball_diameter, ball_diameter);
+	// cc.fillRect(ball_x, ball_y, ball_diameter, ball_diameter);
 	cc.font = "30px Arial";
 	cc.fillText(score1, 100, 100);
 	cc.fillText(score2, c.width - 100, 100);
