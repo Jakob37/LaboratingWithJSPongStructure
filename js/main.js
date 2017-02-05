@@ -46,7 +46,8 @@ function update() {
 
 function draw() {
 
-	cc.fillStyle = 'black';
+	var color_arr = background.getColor(); 
+	cc.fillStyle = background.makeColorString(color_arr);
 	cc.fillRect(0, 0, c.width, c.height);
 
 	ball_object.draw();
