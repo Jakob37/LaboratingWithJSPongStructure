@@ -80,10 +80,6 @@ Ball.prototype.edgeBounce = function() {
 
 Ball.prototype.playerCheck = function(player1, player2) {
 
-	if (!hit)  {
-		console.log("ball: " + this.y_position + " p1 " + player1.y_position + " p2 " + player2.y_position);
-	}
-
 	if (this.x_position < 0) {
 		if (this.y_position > player1.y_position && this.y_position < player1.y_position + player1.height) {
 			this.x_velocity = -this.x_velocity;
@@ -98,8 +94,6 @@ Ball.prototype.playerCheck = function(player1, player2) {
 		}
 	}
 	else if (this.x_position > this.canvas.width - this.diameter) {
-
-		hit = true;
 
 		if (this.y_position > player2.y_position && this.y_position < player2.y_position + player2.height) {
 			this.x_velocity = -this.x_velocity;

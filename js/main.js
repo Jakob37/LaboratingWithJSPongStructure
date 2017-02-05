@@ -8,8 +8,6 @@ var ball_object;
 var player1;
 var player2;
 
-hit = false;
-
 window.onload=function() {
 	c = document.getElementById('gc');
 	cc = c.getContext('2d');
@@ -27,7 +25,7 @@ window.onload=function() {
 		player1.y_position = event.clientY - player1.height / 2; 
 	});
 
-	music_player.sound_on(false);
+	music_player.sound_on(true);
 }
 
 function reset_game() {
